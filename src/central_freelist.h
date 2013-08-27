@@ -79,8 +79,15 @@ class CentralFreeList {
   // page full of 5-byte objects would have 2 bytes memory overhead).
   size_t OverheadBytes();
 
-  // Returns the lock associated with this free list.
-  SpinLock* lock() { return &lock_; }
+  // Lock/Unlock the internal SpinLock. Used on the pthread_atfork call
+  // to set the lock in a consistent state before the fork.
+  void Lock() {
+    lock_.Lock();
+  }
+
+  void Unlock() {
+    lock_.Unlock();
+  }
 
  private:
   // TransferCache is used to cache transfers of
